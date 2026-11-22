@@ -3,11 +3,13 @@ import { join } from "node:path";
 
 // Tiny stack VM for make.fun ISA v1. node main.ts [inputDir] [outputDir]
 // (defaults /input, /output). Runs i001..i040, writing stdout.bin + exit.txt.
-// 32-bit wrapping ints, 256-value stack, 64-deep calls, 256 words of memory,
-// 1,000,000 steps, 65,536 output bytes, traps 2..11. Deterministic: no clock,
-// no randomness, no environment reads.
-const IN = process.argv[2] || "/input";
-const OUT = process.argv[3] || "/output";
+// The grader passes its mounts as MAKEFUN_INPUT_DIR / MAKEFUN_OUTPUT_DIR
+// (in a container those are /input and /output); argv overrides are only
+// for local runs. 32-bit wrapping ints, 256-value stack, 64-deep calls,
+// 256 words of memory, 1,000,000 steps, 65,536 output bytes, traps 2..11.
+// Deterministic: no clock, no randomness.
+const IN = process.env.MAKEFUN_INPUT_DIR || process.argv[2] || "/input";
+const OUT = process.env.MAKEFUN_OUTPUT_DIR || process.argv[3] || "/output";
 
 function run(p, inp) {
   const s = new Int32Array(256);
